@@ -1,0 +1,63 @@
+version: '3.8'
+
+networks:
+  savory-script-network:
+    driver: bridge
+
+services:
+  backend:
+    build: ./backend
+    platform: linux/arm64
+    container_name: backend
+    ports:
+      - "8060:8060"
+    networks:
+      - savory-script-network
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    volumes:
+      - .:/frontend
+      - /frontend/node_modules
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - savory-script-network
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    env_file:
+      - .env
+    volumes:
+      - ./postgres/scripts/:/docker-entrypoint-initdb.d/
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
+      interval: 10s
+      retries: 5
+    networks:
+      - savory-script-network
+
+  init-db-script:
+    build:
+      context: ./postgres/scripts
+    volumes:
+      - ./postgres/scripts:/app/
+    working_dir: /app
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - savory-script-network
+
+volumes:
+  postgres_data:
