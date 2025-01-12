@@ -9,6 +9,11 @@ services:
     build: ./backend
     platform: linux/arm64
     container_name: backend
+    env_file:
+      - .env
+    depends_on:
+      init-db-script:
+        condition: service_completed_successfully
     ports:
       - "8060:8060"
     networks:

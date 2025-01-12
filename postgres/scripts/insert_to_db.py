@@ -13,7 +13,7 @@ load_dotenv()
 dbname = os.getenv("DB_NAME")
 user = os.getenv("DB_USER")
 password = os.getenv("DB_PASSWORD")
-host = "db"
+host = os.getenv("BACKEND_DB_HOST")
 port = os.getenv("DB_PORT")
 
 
@@ -94,8 +94,8 @@ def read_file(file_path):
     return lines
 
 
-def insert_ingredients_to_db(ingredients):
-    """Inserting ingredients into a table."""
+def insert_items_to_db(items, table_name):
+    """Inserting items into a table."""
     connection = None
     try:
         connection = psycopg2.connect(
@@ -103,41 +103,16 @@ def insert_ingredients_to_db(ingredients):
         )
         cursor = connection.cursor()
 
-        ingredient_insert_query = "INSERT INTO ingredients (name) VALUES (%s)"
-        for ingredient in ingredients:
-            cursor.execute(ingredient_insert_query, (ingredient,))
+        item_insert_query = f"INSERT INTO {table_name} (name) VALUES (%s)"
+        for item in items:
+            cursor.execute(item_insert_query, (item,))
 
         connection.commit()
 
-        logging.info("Ingredients successfully added to database.")
+        logging.info("Categories successfully added to database.")
 
     except Exception as error:
-        print(f"Error inserting ingredients: {error}")
-    finally:
-        if connection:
-            cursor.close()
-            connection.close()
-
-
-def insert_cuisines_to_db(cuisines):
-    """Inserting cuisines into a table."""
-    connection = None
-    try:
-        connection = psycopg2.connect(
-            dbname=dbname, user=user, password=password, host=host, port=port
-        )
-        cursor = connection.cursor()
-
-        cuisine_insert_query = "INSERT INTO cuisines (name) VALUES (%s)"
-        for cuisine in cuisines:
-            cursor.execute(cuisine_insert_query, (cuisine,))
-
-        connection.commit()
-
-        logging.info("Cuisines successfully added to database.")
-
-    except Exception as error:
-        print(f"Error inserting cuisines: {error}")
+        print(f"Error inserting into {table_name}: {error}")
     finally:
         if connection:
             cursor.close()
@@ -147,10 +122,12 @@ def insert_cuisines_to_db(cuisines):
 if __name__ == "__main__":
     create_tables()
 
-    ingredients = read_file("data/ingredients.txt")
+    categories = read_file("data/categories.txt")
     cuisines = read_file("data/cuisines.txt")
+    ingredients = read_file("data/ingredients.txt")
 
-    insert_ingredients_to_db(ingredients)
-    insert_cuisines_to_db(cuisines)
+    insert_items_to_db(categories, "categories")
+    insert_items_to_db(cuisines, "cuisines")
+    insert_items_to_db(ingredients, "ingredients")
 
     logging.info("Script execution completed.")
