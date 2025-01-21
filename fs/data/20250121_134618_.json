@@ -1,0 +1,16 @@
+{
+    "entities": [
+        {
+            "type": "add-recipe",
+            "recipe": "{\"id\":2,\"name\":\"ejfjoweqf\",\"description\":\"qwrqweqwe\",\"ingredients\":[{\"id\":1,\"name\":\"name\",\"quantity\":\"200 кг\"},{\"id\":2,\"name\":\"name\",\"quantity\":\"500 кг\"}],\"categories\":[{\"id\":1,\"name\":\"name\"},{\"id\":2,\"name\":\"name\"}],\"cuisine\":{\"id\":1,\"name\":\"cuisine\"}}"
+        },
+        {
+            "type": "add-category",
+            "recipe": "{\"id\":32,\"name\":\"fwwq\"}"
+        },
+        {
+            "type": "add-ingredient",
+            "recipe": "{\"id\":4492,\"name\":\"qweqweqe\",\"quantity\":\"\"}"
+        }
+    ]
+}
