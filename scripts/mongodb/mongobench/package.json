@@ -1,0 +1,13 @@
+{
+    "name": "mongo-benchmark",
+    "version": "1.0.0",
+    "description": "",
+    "main": "mongobench.js",
+    "scripts": {},
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "mongodb": "^4.2.0"
+    }
+  }

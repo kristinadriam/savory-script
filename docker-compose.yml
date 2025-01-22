@@ -3,47 +3,70 @@ version: '3.8'
 networks:
   savory-script-network:
     driver: bridge
+  mongodb-network:
+    driver: bridge
 
 services:
   backend:
     build: ./backend
-    platform: linux/arm64
     container_name: backend
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
     env_file:
       - .env
+    volumes:
+      - ./fs/data:/fs/data
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       init-db-script:
         condition: service_completed_successfully
-    ports:
-      - "8060:8060"
+      postgres:
+        condition: service_healthy
+      mongobench:
+        condition: service_completed_successfully
     networks:
       - savory-script-network
 
   frontend:
     build: ./frontend
     container_name: frontend
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      - "3000:80"
     volumes:
       - .:/frontend
       - /frontend/node_modules
-    ports:
-      - "3000:80"
     depends_on:
       - backend
     networks:
       - savory-script-network
 
-  db:
+  fs:
+    build:
+      context: .
+      dockerfile: ./fs/Dockerfile
+    ports:
+      - "8079:8079"
+    volumes:
+      - ./fs/data:/fs/data
+    networks:
+      - savory-script-network
+
+  postgres:
     image: postgres:latest
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     ports:
-      - "${DB_PORT}:5432"
+      - "${DB_PORT}:${DB_PORT}"
     env_file:
       - .env
     volumes:
-      - ./postgres/scripts/:/docker-entrypoint-initdb.d/
+      - ./data/.pgdata:/var/lib/postgresql/data
+      - ./postgres/scripts:/docker-entrypoint-initdb.d
     healthcheck:
       test: [ "CMD", "pg_isready", "-U", "${DB_USER}", "-d", "${DB_NAME}" ]
       interval: 10s
@@ -60,9 +83,149 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      postgres:
+        condition: service_healthy
     networks:
       - savory-script-network
+
+  pgbench-test:
+    build:
+      context: ./postgres/test
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    networks:
+      - savory-script-network
+    volumes:
+      - ./logs:/var/log/pgbench
+
+  fio-test:
+    build:
+      context: ./fs/test
+      dockerfile: Dockerfile
+    environment:
+      - ./fs/test/.env
+    volumes:
+      - ./fs/test/logs:/usr/local/bin/logs
+
+  spark-master:
+    image: bitnami/spark:latest
+    container_name: spark-master
+    environment:
+      - SPARK_MODE=master
+      - SPARK_MASTER_PORT=7077
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    networks:
+      - savory-script-network
+
+  spark-worker:
+    image: bitnami/spark:latest
+    container_name: spark-worker
+    environment:
+      - SPARK_MODE=worker
+      - SPARK_MASTER_URL=spark://spark-master:7077
+    depends_on:
+      - spark-master
+    networks:
+      - savory-script-network
+
+  spark-streaming:
+    build:
+      context: ./spark
+      dockerfile: Dockerfile
+    depends_on:
+      kafka:
+        condition: service_started
+      spark-master:
+        condition: service_started
+    volumes:
+      - ./fs/data:/fs/data
+    networks:
+      - savory-script-network
+
+  kafka:
+    image: bitnami/kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+    networks:
+      - savory-script-network
+    depends_on:
+      zookeeper:
+        condition: service_started
+
+  zookeeper:
+    image: bitnami/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    networks:
+      - savory-script-network
+
+  k6:
+    image: grafana/k6:latest
+    container_name: k6
+    volumes:
+      - ./scripts:/scripts
+    entrypoint: [ "k6", "run", "-o", "influxdb=http://influxdb:8086/k6", "/scripts/web-api/k6/base.js" ]
+    depends_on:
+      backend:
+        condition: service_started
+    networks:
+      - savory-script-network
+
+  influxdb:
+    image: influxdb:1.8
+    container_name: influxdb
+    volumes:
+      - ./influxdb:/var/lib/influxdb
+    networks:
+      - savory-script-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./scripts/web-api/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    networks:
+      - savory-script-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/data:/data/db
+    networks:
+      - savory-script-network
+      - mongodb-network
+
+  mongobench:
+    build:
+      context: ./scripts/mongodb/mongobench
+      dockerfile: Dockerfile
+    volumes:
+      - ./results:/results
+    depends_on:
+      mongodb:
+        condition: service_started
+    networks:
+      - mongodb-network
 
 volumes:
   postgres_data:

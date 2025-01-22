@@ -1,0 +1,7 @@
+Connected to MongoDB
+Starting benchmark...
+Insert operations completed in 774.111292ms
+Query operations completed in 587.645708ms
+Update operations completed in 299.305666ms
+Delete operations completed in 125.23775ms
+Benchmark completed successfully in 1794.61 ms
