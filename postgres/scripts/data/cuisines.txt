@@ -1,100 +1,100 @@
-Italian cuisine  
-Japanese cuisine  
-Greek cuisine  
-Portuguese cuisine  
-Chinese cuisine  
-Indonesian cuisine  
-Mexican cuisine  
-French cuisine  
-Spanish cuisine  
-Peruvian cuisine  
-Indian cuisine  
-Brazilian cuisine  
-Polish cuisine  
-Argentine cuisine  
-Turkish cuisine  
-American cuisine  
-Thai cuisine  
-Korean cuisine  
-Croatian cuisine  
-Serbian cuisine  
-Hungarian cuisine  
-Vietnamese cuisine  
-Iranian cuisine  
-Chilean cuisine  
-Lebanese cuisine  
-Georgian cuisine  
-Bosnian cuisine  
-Colombian cuisine  
-Romanian cuisine  
-Bulgarian cuisine  
-Malaysian cuisine  
-German cuisine  
-Filipino cuisine  
-Belgian cuisine  
-Czech cuisine  
-Austrian cuisine  
-Swiss cuisine  
-Lithuanian cuisine  
-English cuisine  
-Algerian cuisine  
-Russian cuisine  
-Slovak cuisine  
-Canadian cuisine  
-Swedish cuisine  
-Dutch cuisine  
-Moroccan cuisine  
-Scottish cuisine  
-Ecuadorian cuisine  
-Danish cuisine  
-Australian cuisine  
-Egyptian cuisine  
-South African cuisine  
-Ukrainian cuisine  
-Syrian cuisine  
-Irish cuisine  
-Singaporean cuisine  
-Pakistani cuisine  
-Puerto Rican cuisine  
-Norwegian cuisine  
-Bolivian cuisine  
-Macedonian cuisine  
-Israeli cuisine  
-Palestinian cuisine  
-Slovenian cuisine  
-Finnish cuisine  
-Tunisian cuisine  
-Haitian cuisine  
-Jamaican cuisine  
-Armenian cuisine  
-Venezuelan cuisine  
-Belarusian cuisine  
-Moldovan cuisine  
-Sri Lankan cuisine  
-Jordanian cuisine  
-Cuban cuisine  
-Uzbek cuisine  
-Azerbaijani cuisine  
-Taiwanese cuisine  
-Uruguayan cuisine  
-Montenegrin cuisine  
-Ethiopian cuisine  
-Iraqi cuisine  
-Qatari cuisine  
-Trinidadian and Tobagonian cuisine  
-Libyan cuisine  
-Lao cuisine  
-Barbadian cuisine  
-Cypriot cuisine  
-Bangladeshi cuisine  
-Kazakh cuisine  
-Albanian cuisine  
-Kyrgyz cuisine  
-Myanmar cuisine  
-New Zealand cuisine  
-Saudi cuisine  
-Northern Irish cuisine  
-Bahamian cuisine  
-Dominican cuisine  
-Welsh cuisine  
-Ghanaian cuisine
+Italian
+Japanese
+Greek
+Portuguese
+Chinese
+Indonesian
+Mexican
+French
+Spanish
+Peruvian
+Indian
+Brazilian
+Polish
+Argentine
+Turkish
+American
+Thai
+Korean
+Croatian
+Serbian
+Hungarian
+Vietnamese
+Iranian
+Chilean
+Lebanese
+Georgian
+Bosnian
+Colombian
+Romanian
+Bulgarian
+Malaysian
+German
+Filipino
+Belgian
+Czech
+Austrian
+Swiss
+Lithuanian
+English
+Algerian
+Russian
+Slovak
+Canadian
+Swedish
+Dutch
+Moroccan
+Scottish
+Ecuadorian
+Danish
+Australian
+Egyptian
+South African
+Ukrainian
+Syrian
+Irish
+Singaporean
+Pakistani
+Puerto Rican
+Norwegian
+Bolivian
+Macedonian
+Israeli
+Palestinian
+Slovenian
+Finnish
+Tunisian
+Haitian
+Jamaican
+Armenian
+Venezuelan
+Belarusian
+Moldovan
+Sri Lankan
+Jordanian
+Cuban
+Uzbek
+Azerbaijani
+Taiwanese
+Uruguayan
+Montenegrin
+Ethiopian
+Iraqi
+Qatari
+Trinidadian and Tobagonian
+Libyan
+Lao
+Barbadian
+Cypriot
+Bangladeshi
+Kazakh
+Albanian
+Kyrgyz
+Myanmar
+New Zealand
+Saudi
+Northern Irish
+Bahamian
+Dominican
+Welsh
+Ghanaian
