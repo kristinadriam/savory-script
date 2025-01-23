@@ -6,7 +6,7 @@ datasources:
     access: proxy
     url: http://influxdb:8086
     isDefault: true
-    database: mydb
+    database: k6
     user: admin
     secureJsonData:
       password: admin
