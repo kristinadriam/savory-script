@@ -28,7 +28,7 @@ func (server *Server) CreateRecipe(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, gin.H{"recipe_id": id})
 
-	recipe, err := server.DB.GetRecipe(dbRecipe, id)
+	recipe, err := server.DB.GetRecipeById(id)
 	if err != nil {
 		utils.LogWarnf(logTag, "Failed to get recipe info")
 		return

@@ -1,0 +1,129 @@
+{
+  "id": null,
+  "title": "HTTP Metrics Dashboard",
+  "description": "Dashboard for monitoring HTTP metrics",
+  "panels": [
+    {
+      "type": "graph",
+      "title": "HTTP Request Duration",
+      "targets": [
+        {
+          "query": "SELECT percentile(\"duration\", 95) FROM \"http_request_duration_seconds\" WHERE $timeFilter GROUP BY time($__interval)",
+          "datasource": "InfluxDB"
+        }
+      ],
+      "xaxis": {
+        "mode": "time",
+        "name": null,
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "s",
+          "label": "Duration (s)",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "show": false
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Request Count",
+      "targets": [
+        {
+          "query": "SELECT count(\"requests\") FROM \"http_requests_total\" WHERE $timeFilter GROUP BY time($__interval)",
+          "datasource": "InfluxDB"
+        }
+      ],
+      "xaxis": {
+        "mode": "time",
+        "name": null,
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Requests",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "show": false
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "Error Count",
+      "targets": [
+        {
+          "query": "SELECT count(\"errors\") FROM \"http_requests_total\" WHERE \"status\"=~ /5../ AND $timeFilter GROUP BY time($__interval)",
+          "datasource": "InfluxDB"
+        }
+      ],
+      "xaxis": {
+        "mode": "time",
+        "name": null,
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Errors",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "show": false
+        }
+      ]
+    },
+    {
+      "type": "graph",
+      "title": "RPS (Requests per second)",
+      "targets": [
+        {
+          "query": "SELECT mean(\"requests\") FROM \"http_requests_total\" WHERE $timeFilter GROUP BY time($__interval) fill(null)",
+          "datasource": "InfluxDB"
+        }
+      ],
+      "xaxis": {
+        "mode": "time",
+        "name": null,
+        "show": true
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "Requests/sec",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "show": false
+        }
+      ]
+    }
+  ],
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "schemaVersion": 16,
+  "version": 0
+}

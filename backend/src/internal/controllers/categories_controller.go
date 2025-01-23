@@ -22,7 +22,7 @@ func (server *Server) GetCategories(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"categories": categories})
+	c.JSON(http.StatusOK, gin.H{"categories": categories})
 }
 
 func (server *Server) AddCategory(c *gin.Context) {

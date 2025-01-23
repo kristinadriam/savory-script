@@ -70,7 +70,7 @@ func (fs *Fs) AddEntity(writeType OperationType, jsonBody string) {
 func (fs *Fs) ClearEntities() {
 	fs.Mu.Lock()
 	utils.LogInfof(logTag, "Entities cleared")
-	fs.Entities = Entities{}
+	fs.Entities = Entities{Entities: []Entity{}}
 	fs.Mu.Unlock()
 }
 

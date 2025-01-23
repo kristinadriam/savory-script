@@ -54,5 +54,5 @@ func (server *Server) GetIngredients(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"ingredients": ingredients})
+	c.JSON(http.StatusOK, gin.H{"ingredients": ingredients})
 }

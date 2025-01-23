@@ -22,7 +22,7 @@ func (server *Server) GetCuisines(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"cuisines": cuisines})
+	c.JSON(http.StatusOK, gin.H{"cuisines": cuisines})
 }
 
 func (server *Server) AddCuisine(c *gin.Context) {

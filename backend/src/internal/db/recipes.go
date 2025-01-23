@@ -229,34 +229,90 @@ func (db *Db) GetRecipes(author_id int) ([]models.Recipe, error) {
 	return recipes, nil
 }
 
-func (db *Db) GetRecipe(recipe DbRecipe, id int) (models.Recipe, error) {
-	// todo: add info from db
-	ingredients := make([]models.Ingredient, len(recipe.Ingredients))
-	for i, ingredient := range recipe.Ingredients {
-		ingredients[i] = models.Ingredient{
-			Id:       ingredient.Id,
-			Name:     "name",
-			Quantity: ingredient.Quantity,
-		}
+func (db *Db) GetRecipeById(id int) (models.Recipe, error) {
+	recipe := models.Recipe{}
+
+	sqlStatementSelectRecipes := `
+	SELECT
+	 r.id AS id,
+	 r.name AS name,
+	 r.description AS description
+	FROM recipes
+	WHERE id = $1;
+	`
+
+	sqlStatementSelectIngredients := `
+	WITH select_ids AS (
+	 SELECT
+	  ingredient_id,
+	  quantity
+	 FROM recipes_ingredients
+	 WHERE recipe_id = $1
+	)
+	SELECT ingredients.id AS id, ingredients.name AS name, select_ids.quantity AS quantity
+	FROM ingredients
+	INNER JOIN select_ids ON select_ids.ingredient_id = ingredients.id;
+	`
+
+	sqlStatementSelectCategories := `
+	WITH select_ids AS (
+	 SELECT
+	  category_id
+	 FROM recipes_categories
+	 WHERE recipe_id = $1
+	)
+	SELECT categories.id AS id, categories.name AS name
+	FROM categories
+	INNER JOIN select_ids ON select_ids.category_id = categories.id;
+	`
+
+	// get recipe
+	err := db.db.QueryRow(sqlStatementSelectRecipes, id).Scan(&recipe.Id, &recipe.Name, &recipe.Description)
+	if err != nil {
+		utils.LogErrorf(logTag, "Error executing query for selecting recipe: %v", err)
+		return recipe, err
 	}
 
-	categories := make([]models.Category, len(recipe.Categories))
-	for i, category := range recipe.Categories {
-		categories[i] = models.Category{
-			Id:   category,
-			Name: "name",
-		}
+	// get ingredients
+	ingredients_from_db, err := db.db.Query(sqlStatementSelectIngredients, id)
+	if err != nil {
+		utils.LogErrorf(logTag, "4 Error executing query for selecting recipe ingredients: %v", err)
+		return recipe, err
 	}
-	
-	return models.Recipe{
-		Id:          id,
-		Name:        recipe.Name,
-		Description: recipe.Description,
-		Ingredients: ingredients,
-		Categories:  categories,
-		Cuisine: models.Cuisine{
-			Id:   recipe.Cuisine,
-			Name: "cuisine",
-		},
-	}, nil
+
+	for ingredients_from_db.Next() {
+		ingredient := models.Ingredient{}
+		err := ingredients_from_db.Scan(
+			&ingredient.Id,
+			&ingredient.Name,
+		)
+		if err != nil {
+			utils.LogErrorf(logTag, "5 Error executing query for selecting recipes: %v", err)
+			return recipe, err
+		}
+
+		recipe.Ingredients = append(recipe.Ingredients, ingredient)
+	}
+
+	// get categories data
+	categories_from_db, err := db.db.Query(sqlStatementSelectCategories, id)
+	if err != nil {
+		utils.LogErrorf(logTag, "6 Error executing query for selecting recipe categories: %v", err)
+		return recipe, err
+	}
+
+	for categories_from_db.Next() {
+		category := models.Category{}
+		err := categories_from_db.Scan(
+			&category.Id,
+			&category.Name,
+		)
+		if err != nil {
+			utils.LogErrorf(logTag, "7 Error executing query for selecting recipes: %v", err)
+			return recipe, err
+		}
+		recipe.Categories = append(recipe.Categories, category)
+	}
+
+	return recipe, nil
 }
