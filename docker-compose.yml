@@ -7,6 +7,8 @@ networks:
     driver: bridge
   postgres-network:
     driver: bridge
+  fs-network:
+    driver: bridge
 
 services:
   backend:
@@ -23,11 +25,11 @@ services:
     depends_on:
       init-postgres-script:
         condition: service_completed_successfully
-      postgres:
-        condition: service_healthy
-      mongobench:
-        condition: service_completed_successfully
       pgbench:
+        condition: service_completed_successfully
+      fio:
+        condition: service_completed_successfully
+      mongobench:
         condition: service_completed_successfully
     networks:
       - savory-script-network
@@ -44,17 +46,6 @@ services:
       - /frontend/node_modules
     depends_on:
       - backend
-    networks:
-      - savory-script-network
-
-  fs:
-    build:
-      context: .
-      dockerfile: ./fs/Dockerfile
-    ports:
-      - "8079:8079"
-    volumes:
-      - ./fs/data:/fs/data
     networks:
       - savory-script-network
 
@@ -110,17 +101,32 @@ services:
       - ./logs:/var/log/pgbench
       - ./results:/results
 
-  fio-test:
+  fs:
     build:
-      context: ./fs/test
+      context: .
+      dockerfile: ./fs/Dockerfile
+    ports:
+      - "8079:8079"
+    volumes:
+      - ./fs/data:/fs/data
+    networks:
+      - savory-script-network
+      - fs-network
+
+  fio:
+    build:
+      context: ./scripts/fs/fio
       dockerfile: Dockerfile
     environment:
       - ./fs/test/.env
     volumes:
-      - ./fs/test/logs:/usr/local/bin/logs
+      - ./scripts/fs/fio/logs:/usr/local/bin/logs
+      - ./results:/results
+    networks:
+      - fs-network
 
   spark-master:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.4.0
     container_name: spark-master
     environment:
       - SPARK_MODE=master
@@ -132,7 +138,7 @@ services:
       - savory-script-network
 
   spark-worker:
-    image: bitnami/spark:latest
+    image: bitnami/spark:3.4.0
     container_name: spark-worker
     environment:
       - SPARK_MODE=worker

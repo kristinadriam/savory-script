@@ -1,0 +1,14 @@
+[global]
+ioengine=sync
+direct=0
+rw=write
+runtime=60
+time_based
+directory=.
+
+[job1]
+bs=${BLOCK_SIZE}
+size=100M
+write_iops_log=${LOG_DIR}/job1_iops_${BLOCK_SIZE}.log
+write_bw_log=${LOG_DIR}/job1_bw_${BLOCK_SIZE}.log
+log_avg_msec=1000
