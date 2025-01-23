@@ -1,0 +1,7 @@
+data/.pgdata
+mongodb
+influxdb
+node_modules
+fs/data
+scripts/fs/fio/logs
+**/.DS_Store

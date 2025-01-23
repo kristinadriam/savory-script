@@ -45,7 +45,8 @@ services:
       - .:/frontend
       - /frontend/node_modules
     depends_on:
-      - backend
+      backend:
+        condition: service_started
     networks:
       - savory-script-network
 
